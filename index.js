@@ -1,7 +1,12 @@
 const express = require("express");
 const app = express();
+ const methodOverride = require('method-override')
+
 const port = 8080;
   const path = require("path");
+  const { v4 : uuidv4 } = require("uuid");
+  
+app.use(methodOverride('_method'));
 
   app.use(express.urlencoded({extended:true}));
    app.use(express.json());
@@ -13,46 +18,69 @@ const port = 8080;
 
     let posts =[
     {
-      id:"1a",
+      id:uuidv4(),
       username:"Ganesh",
       content:"i love coding" 
     },
     {
-        id:"2b",
+        id:uuidv4(),
        username:"Nanduraj",
        content:"i like to play BGMI"
     },
     {
-        id:"3c",
+        id:uuidv4(),
       username:"Atharv",
       content:"i love to view Reels on instagram"
         },
   ];
-
+     //this req is for home page
      app.get("/",(req,res)=>{
         res.send("Server Working Well");
      });
-
-     app.get("/posts/new",(req,res)=>{
-      res.render("new.ejs");
-     })
-    
+     //this req is for showing Existed posts
      app.get("/posts",(req,res)=>{
       res.render("index.ejs",{posts});
      });
+     
+       //this req is for creating new posts
+     app.get("/posts/new",(req,res)=>{
+      res.render("new.ejs");
+     })
       
+     //this post req is used to push data in posts array or used to create new posts
      app.post("/posts",(req,res)=>{
       let {username,content} = req.body;
-        posts.push({username,content});
-      res.redirect("/posts");
+       let id  = uuidv4();
+        posts.push({id,username,content});
+      res.redirect("/posts"); 
      });
 
+      //this req is for search a specific post by its id 
      app.get("/posts/:id",(req,res)=>{
       let {id} = req.params;
+      console.log(id);
        let post  = posts.find((p)=> id === p.id);
        res.render("show.ejs", { post });
      });
-
+      
+     // //this req is for search a specific post by its id & change something in that post
+      app.patch("/posts/:id",(req,res)=>{
+        let {id} = req.params;
+        let newcontent = req.body.content;
+        let post  = posts.find((p)=> id === p.id);
+        post.content = newcontent;
+         console.log();
+      res.redirect("/posts");
+      })
+      
+        // craeting this route for editing the post 
+        app.get("/posts/:id/edit", (req,res)=>{
+          let {id} = req.params;
+           let post  = posts.find((p)=> id === p.id);
+          res.render("edit.ejs",{post});
+        })
+      
+ 
    app.listen(port,(req,res)=>{
     console.log("Port is Listening to ",port);
    })
