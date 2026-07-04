@@ -41,9 +41,9 @@ const port = 8080;
      app.post("/posts",(req,res)=>{
       let {username,content} = req.body;
         posts.push({username,content});
-      res.send("Request Recieve Sucessfully");
-     })
-   
+      res.redirect("/posts");
+     });
+
    app.listen(port,(req,res)=>{
     console.log("Port is Listening to ",port);
    })
