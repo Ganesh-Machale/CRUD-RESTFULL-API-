@@ -29,11 +29,21 @@ const port = 8080;
      app.get("/",(req,res)=>{
         res.send("Server Working Well");
      });
+
+     app.get("/posts/new",(req,res)=>{
+      res.render("new.ejs");
+     })
     
      app.get("/posts",(req,res)=>{
       res.render("index.ejs",{posts});
+     });
+      
+     app.post("/posts",(req,res)=>{
+      let {username,content} = req.body;
+        posts.push({username,content});
+      res.send("Request Recieve Sucessfully");
      })
-
+   
    app.listen(port,(req,res)=>{
     console.log("Port is Listening to ",port);
    })
